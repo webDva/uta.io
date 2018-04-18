@@ -1,0 +1,12 @@
+<input type="file" #filelist multiple (change)="onSongFilesChange(filelist.files)" placeholder="Upload songs">
+<button type="button" (click)="uploadSongs()" [disabled]="!songFiles">Upload songs</button>
+
+<table>
+  <tr>
+      <th>Songs</th>
+  </tr>
+  <tr *ngFor="let s of songFiles; let i = index;">
+      <td>{{i + 1}}</td>
+      <td>{{songFiles[i].name}}</td>
+  </tr>
+</table>
