@@ -3,6 +3,9 @@ let cors = require('cors');
 let path = require('path');
 let bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
+const multer = require('multer');
+
+const upload = multer({ storage: multer.memoryStorage() })
 
 /*
 * MongoDB
@@ -53,15 +56,15 @@ app.set('port', port);
 * Routes
 */
 
-app.post('/addSongs', (req, res) => {
+app.post('/addSongs', upload.array('songs'), (req, res) => {
     MongoClient.connect('mongodb://localhost:27017/songdb', (err, db) => {
         if (err)
             throw err;
-    
+
         const dbo = db.db('songdb');
 
-        req.body.songs.forEach(song => {
-            const obj_send_off = {musician: req.body.musician_name, song: song};
+        req.files.forEach(song => {
+            const obj_send_off = { musician: req.body.musician_name, song: song.originalname };
             dbo.collection('songs').insertOne(obj_send_off, (err, res) => {
                 if (err)
                     throw err;
@@ -69,7 +72,7 @@ app.post('/addSongs', (req, res) => {
         });
 
         db.close();
-    });    
+    });
 });
 
 /*

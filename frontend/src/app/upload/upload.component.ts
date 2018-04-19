@@ -12,46 +12,22 @@ export class UploadComponent implements OnInit {
   baseUrl = '';
 
   songFiles: FileList;
-  // formData: FormData;
+  formData: FormData;
 
   onSongFilesChange(files?: FileList) {
     if (files) {
       this.songFiles = files;
     }
 
-    // this.formData = new FormData();
-
-    // for (let i = 0; i < this.songFiles.length; i++) {
-    //   this.formData.append('songs', this.songFiles[i].name);
-    // }
-
-    // if (files) {
-    //   for (let i = 0; i < files.length; i++) {
-    //     this.formData.append('files', files[i], files[i].name);
-    //   }
-    // } else {
-    //   for (let i = 0; i < this.songFiles.length; i++) {
-    //     this.formData.append('files', this.songFiles[i], this.songFiles[i].name);
-    //   }
-
-      //this.padding = padding;
-      //formData.append('padding', this.padding);
-    //}
-
-    // this.http.post<UploadResponseType>(this.baseUrl + '/upload', formData).subscribe(data => {
-    //     let blob = new Blob([new Uint8Array(data['newImage']['data'])], {type: 'image/png'});
-    //     this.url = this.sanitzer.bypassSecurityTrustUrl(window.URL.createObjectURL(blob));
-    // });
+    this.formData = new FormData();
+    for (let i = 0; i < this.songFiles.length; i++) {
+      this.formData.append('songs', this.songFiles[i], this.songFiles[i].name);
+    }
+    this.formData.append('musician_name', 'random mu mu');
   }
 
   uploadSongs() {
-    let songFilesList = []
-
-    for (let i = 0; i < this.songFiles.length; i++) {
-      songFilesList.push(this.songFiles[i].name);
-    }
-
-    this.http.post(this.baseUrl + '/addSongs', {musician_name: "random musician", songs: songFilesList}).subscribe(data => {
+    this.http.post(this.baseUrl + '/addSongs', this.formData).subscribe(data => {
       const result = data;
     });
   }
