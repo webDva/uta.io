@@ -12,26 +12,31 @@ export class UploadComponent implements OnInit {
   baseUrl = '';
 
   songFiles: FileList;
+  // formData: FormData;
 
   onSongFilesChange(files?: FileList) {
     if (files) {
       this.songFiles = files;
     }
 
-    let formData = new FormData();
+    // this.formData = new FormData();
 
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i], files[i].name);
-      }
-    } else {
-      for (let i = 0; i < this.songFiles.length; i++) {
-        formData.append('files', this.songFiles[i], this.songFiles[i].name);
-      }
+    // for (let i = 0; i < this.songFiles.length; i++) {
+    //   this.formData.append('songs', this.songFiles[i].name);
+    // }
+
+    // if (files) {
+    //   for (let i = 0; i < files.length; i++) {
+    //     this.formData.append('files', files[i], files[i].name);
+    //   }
+    // } else {
+    //   for (let i = 0; i < this.songFiles.length; i++) {
+    //     this.formData.append('files', this.songFiles[i], this.songFiles[i].name);
+    //   }
 
       //this.padding = padding;
       //formData.append('padding', this.padding);
-    }
+    //}
 
     // this.http.post<UploadResponseType>(this.baseUrl + '/upload', formData).subscribe(data => {
     //     let blob = new Blob([new Uint8Array(data['newImage']['data'])], {type: 'image/png'});
@@ -40,7 +45,15 @@ export class UploadComponent implements OnInit {
   }
 
   uploadSongs() {
+    let songFilesList = []
 
+    for (let i = 0; i < this.songFiles.length; i++) {
+      songFilesList.push(this.songFiles[i].name);
+    }
+
+    this.http.post(this.baseUrl + '/addSongs', {musician_name: "random musician", songs: songFilesList}).subscribe(data => {
+      const result = data;
+    });
   }
 
   constructor(private http: HttpClient) { }

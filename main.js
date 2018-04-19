@@ -2,6 +2,39 @@ let express = require('express');
 let cors = require('cors');
 let path = require('path');
 let bodyParser = require('body-parser');
+const MongoClient = require('mongodb').MongoClient;
+
+/*
+* MongoDB
+*/
+
+MongoClient.connect('mongodb://localhost:27017/songdb', (err, db) => {
+    if (err)
+        throw err;
+
+    const dbo = db.db('songdb');
+    dbo.createCollection('songs', {
+        validator: {
+            $jsonSchema: {
+                bsonType: "object",
+                required: ["musician", "song"],
+                properties: {
+                    musician: {
+                        bsonType: "string"
+                    },
+                    song: {
+                        bsonType: "string"
+                    }
+                }
+            }
+        }
+    }, (err, res) => {
+        if (err)
+            throw err;
+
+        db.close();
+    });
+});
 
 /*
  * API Server
@@ -15,6 +48,29 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const port = process.env.PORT || '3000';
 app.set('port', port);
+
+/*
+* Routes
+*/
+
+app.post('/addSongs', (req, res) => {
+    MongoClient.connect('mongodb://localhost:27017/songdb', (err, db) => {
+        if (err)
+            throw err;
+    
+        const dbo = db.db('songdb');
+
+        req.body.songs.forEach(song => {
+            const obj_send_off = {musician: req.body.musician_name, song: song};
+            dbo.collection('songs').insertOne(obj_send_off, (err, res) => {
+                if (err)
+                    throw err;
+            });
+        });
+
+        db.close();
+    });    
+});
 
 /*
 * Error Handling

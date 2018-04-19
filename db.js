@@ -1,3 +1,6 @@
+// "C:\Program Files\MongoDB\Server\3.6\bin\mongod.exe"
+// "C:\Program Files\MongoDB\Server\3.6\bin\mongo.exe"
+
 const mongo = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
 
