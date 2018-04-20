@@ -4,12 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { UploadComponent } from './upload/upload.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    UploadComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -17,6 +15,6 @@ import { UploadComponent } from './upload/upload.component';
     HttpClientModule
   ],
   providers: [],
-  bootstrap: [UploadComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
