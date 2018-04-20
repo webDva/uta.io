@@ -14,33 +14,8 @@ const upload = multer({ storage: multer.memoryStorage() })
 * MongoDB
 */
 
-MongoClient.connect('mongodb://localhost:27017/songdb', (err, db) => {
-    if (err)
-        throw err;
-
-    const dbo = db.db('songdb');
-    dbo.createCollection('songs', {
-        validator: {
-            $jsonSchema: {
-                bsonType: "object",
-                required: ["musician", "song"],
-                properties: {
-                    musician: {
-                        bsonType: "string"
-                    },
-                    song: {
-                        bsonType: "string"
-                    }
-                }
-            }
-        }
-    }, (err, res) => {
-        if (err)
-            throw err;
-
-        db.close();
-    });
-});
+const databasename = 'utadb'
+const databaseuri = 'mongodb://localhost:27017/'
 
 /*
  * API Server
@@ -60,11 +35,11 @@ app.set('port', port);
 */
 
 app.post('/addSongs', upload.array('songs'), (req, res) => {
-    MongoClient.connect('mongodb://localhost:27017/songdb', (err, db) => {
+    MongoClient.connect(databaseuri + databasename, (err, db) => {
         if (err)
             throw err;
 
-        const dbo = db.db('songdb');
+        const dbo = db.db(databasename);
 
         req.files.forEach(song => {
             const obj_send_off = { musician: req.body.musician_name, song: song.originalname };
@@ -79,10 +54,10 @@ app.post('/addSongs', upload.array('songs'), (req, res) => {
 });
 
 app.post('/createAccount', (req, res) => {
-    MongoClient.connect('mongodb://localhost:27017/songdb', (err, db) => {
+    MongoClient.connect(databaseuri + databasename, (err, db) => {
         if (err) throw err;
 
-        const dbo = db.db('songdb');
+        const dbo = db.db(databasename);
 
         dbo.collection('accounts').insertOne({
             username: req.body.username,
