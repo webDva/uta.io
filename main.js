@@ -59,15 +59,28 @@ app.post('/createAccount', (req, res) => {
 
         const dbo = db.db(databasename);
 
-        dbo.collection('accounts').insertOne({
-            username: req.body.username,
-            account_id: uuidv4(),
-            email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, 12),
-            type: "account"
-        }, (err, res) => { if (err) throw err; });
+        dbo.collection('accounts').findOne({ email: req.body.email })
+            .then(result => {
+                if (err) throw err;
 
-        db.close();
+                if (result) {
+                    db.close();
+                    return res.send({ error: true });
+                } else {
+                    dbo.collection('accounts').insertOne({
+                        username: req.body.username,
+                        account_id: uuidv4(),
+                        email: req.body.email,
+                        password: bcrypt.hashSync(req.body.password, 12),
+                        type: "account"
+                    }, (err, res) => { if (err) throw err; });
+
+                    db.close();
+                    return res.end();
+                }
+            }, error => {
+                return res.send({ error: true });
+            });
     });
 });
 
