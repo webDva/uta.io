@@ -1,10 +1,15 @@
+import { randomBytes } from 'crypto';
+
 let express = require('express');
 let cors = require('cors');
 let path = require('path');
 let bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const multer = require('multer');
+const uuidv4 = require('uuid/v4');
+const bcrypt = require('bcrypt');
 
+// Multer configuration
 const upload = multer({ storage: multer.memoryStorage() })
 
 /*
@@ -70,6 +75,24 @@ app.post('/addSongs', upload.array('songs'), (req, res) => {
                     throw err;
             });
         });
+
+        db.close();
+    });
+});
+
+app.post('/createAccount', (req, res) => {
+    MongoClient.connect('mongodb://localhost:27017/songdb', (err, db) => {
+        if (err) throw err;
+
+        const dbo = db.db('songdb');
+
+        dbo.collection('accounts').insertOne({
+            username: req.body.username,
+            account_id: uuidv4(),
+            email: req.body.email,
+            password: bcrypt.hashSync(req.body.password, 12),
+            type: "account"
+        }, (err, res) => { if (err) throw err; });
 
         db.close();
     });
