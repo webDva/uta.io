@@ -42,7 +42,7 @@ app.post('/addSongs', upload.array('songs'), (req, res) => {
         const dbo = db.db(databasename);
 
         req.files.forEach(song => {
-            const obj_send_off = { musician: req.body.musician_name, song: song.originalname };
+            const obj_send_off = { account_id: req.body.account_id, song: song.originalname };
             dbo.collection('songs').insertOne(obj_send_off, (err, res) => {
                 if (err)
                     throw err;
